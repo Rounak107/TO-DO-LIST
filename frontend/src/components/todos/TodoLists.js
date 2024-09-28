@@ -26,52 +26,147 @@ function TodoLists({fetchUserTodos , userTodos, setUserTodos, BASE_URL}) {
       //for Title edit 
 
       const handleEditTitle = async (user) => {
+        // Prompt user to enter a new title
         const newTitle = prompt("Enter New Title");
-
-        if(!newTitle){
-          alert("Please enter new tile to change current title.")
-        }else{
-          const resp = await axios.put(`${BASE_URL}/api/editATodo/${user._id}`,{
-            Title : newTitle
-          } )
-          fetchUserTodos();
-          console.log(resp);
+      
+        // Check if the user provided a new title
+        if (!newTitle) {
+          alert("Please enter a new title to change the current title.");
+          return;
         }
-
-      }
+      
+        try {
+          // Send PUT request to the backend to update the title
+          const resp = await axios.put(
+            `${BASE_URL}/api/editATodo/${user._id}`, // Backend endpoint to update the To-Do item
+            {
+              Title: newTitle
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              withCredentials: true, // Include credentials like cookies if required by the backend
+            }
+          );
+      
+          // Handle success and refresh the list of To-Do items
+          if (resp.status === 200) {
+            alert("Title updated successfully!");
+            fetchUserTodos(); // Refresh the list of To-Dos
+          }
+      
+          // Log the response from the server
+          console.log("Response from server:", resp);
+      
+        } catch (error) {
+          // Log and handle error cases
+          console.error("Error occurred while updating the title:", error);
+      
+          // Check for server response and display an appropriate error message
+          if (error.response) {
+            alert(error.response.data.message || "Failed to update title! Please try again.");
+          } else {
+            alert("Unable to connect to the server!");
+          }
+        }
+      };
 
         // to delete title
 
-          const handleDeleteTitle= async (user) => {
-              const resp = await axios.delete(`${BASE_URL}/api/deleteATodo/${user._id}`)
-              console.log(resp);
-              fetchUserTodos();
-              window.location.reload();  
-            };
+        const handleDeleteTitle = async (user) => {
+          // Confirm with the user before proceeding with the deletion
+          const confirmDelete = window.confirm("Are you sure you want to delete this To-Do item?");
+          
+          if (!confirmDelete) {
+            return; // Exit the function if the user cancels the deletion
+          }
+        
+          try {
+            // Send DELETE request to the backend to delete the To-Do item
+            const resp = await axios.delete(
+              `${BASE_URL}/api/deleteATodo/${user._id}`,
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                withCredentials: true, // Include credentials like cookies if needed by the backend
+              }
+            );
+        
+            // Handle success and refresh the To-Do list
+            if (resp.status === 200) {
+              console.log("To-Do deleted:", resp);
+              fetchUserTodos(); // Refresh the list of To-Dos
+              window.alert("To-Do item deleted successfully!");
+            }
+        
+          } catch (error) {
+            // Handle and log errors
+            console.error("Error occurred while deleting the To-Do item:", error);
+        
+            // Check for server response and provide appropriate feedback
+            if (error.response) {
+              alert(error.response.data.message || "Failed to delete To-Do item! Please try again.");
+            } else {
+              alert("Unable to connect to the server!");
+            }
+          }
+        };
 
             //to create a task inside the specific todo
            
                 
             console.log(tasks)
-            const  handdleTasksForTitle = async (title) =>{
-                 
-
-                    if (tasks === "")
-                     {return alert("enter a task")}
-
-                  
-                  
-                    const data = {
-                    Tasks:tasks,
-                    DueDate: dueDate
+            const handleTasksForTitle = async (title) => {
+              // Check if the task input is empty
+              if (!tasks) {
+                return alert("Please enter a task");
+              }
+            
+              try {
+                // Prepare the data for the PUT request
+                const data = {
+                  Tasks: tasks,
+                  DueDate: dueDate,
+                };
+            
+                console.log("Data from handleTasksForTitle:", data);
+            
+                // Send PUT request to the backend to add the task to the To-Do item
+                const resp = await axios.put(
+                  `${BASE_URL}/api/insertTaskInTodo/${title}`, // Backend endpoint
+                  data,
+                  {
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    withCredentials: true, // Include credentials like cookies if required by the backend
                   }
-                  console.log (data, "from Handel task")
-                  const resp = await axios.put(`${BASE_URL}/api/insertTaskInTodo/${title}`,data)
-                    console.log(resp.data.todo.Tasks);
-                    setTasks("");
-                    fetchUserTodos(); 
-                   setDueDate()
-            }
+                );
+            
+                // Log the updated tasks in the console
+                console.log("Updated tasks in To-Do:", resp.data.todo.Tasks);
+            
+                // Clear the input fields after successful task submission
+                setTasks("");
+                setDueDate("");
+            
+                // Fetch and refresh the list of To-Dos
+                fetchUserTodos();
+            
+              } catch (error) {
+                // Handle and log errors
+                console.error("Error occurred while adding task:", error);
+            
+                // Check for server response and display an appropriate message
+                if (error.response) {
+                  alert(error.response.data.message || "Failed to add task! Please try again.");
+                } else {
+                  alert("Unable to connect to the server!");
+                }
+              }
+            };
               
             // //getting all tasks for the title
             //   const [titleTasks, setTitleTasks] = useState(null)
@@ -89,69 +184,148 @@ function TodoLists({fetchUserTodos , userTodos, setUserTodos, BASE_URL}) {
             
 
             //editing a task in todo title
-            const handleEditTaskForTitle = async (user,index) => {
-              const newTask = prompt("Enter New task");
-      
-              if(!newTask){
-                alert("Please enter new task to change current task.")
-              }else{
-                const resp = await axios.put(`${BASE_URL}/api/editTaskInTodo/${user._id}`,{
-                  taskIndex:index,
-                  newTaskText : newTask
-                } )
-                console.log(resp);
-                fetchUserTodos()
-
+            const handleEditTaskForTitle = async (user, index) => {
+              // Prompt the user to enter a new task
+              const newTask = prompt("Enter new task");
+            
+              // Check if the new task is provided
+              if (!newTask) {
+                alert("Please enter a new task to update the current task.");
+                return;
               }
-      
-            }
-
+            
+              try {
+                // Prepare the data for the PUT request
+                const data = {
+                  taskIndex: index,
+                  newTaskText: newTask,
+                };
+            
+                // Send the PUT request to the backend to edit the task
+                const resp = await axios.put(
+                  `${BASE_URL}/api/editTaskInTodo/${user._id}`, // Backend endpoint to edit a task
+                  data,
+                  {
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    withCredentials: true, // Include credentials if required by the backend
+                  }
+                );
+            
+                // Log the response from the server
+                console.log("Response from server:", resp);
+            
+                // Handle success and refresh the list of To-Dos
+                if (resp.status === 200) {
+                  alert("Task updated successfully!");
+                  fetchUserTodos(); // Refresh the To-Do list to reflect changes
+                }
+            
+              } catch (error) {
+                // Handle and log errors
+                console.error("Error occurred while updating the task:", error);
+            
+                // Check for server response and provide appropriate feedback
+                if (error.response) {
+                  alert(error.response.data.message || "Failed to update the task! Please try again.");
+                } else {
+                  alert("Unable to connect to the server!");
+                }
+              }
+            };
 
               //deleting a task for a specific todo title
-              const handleDeleteTaskForTitle= async (user,index) => {
-                const resp = await axios.put(`${BASE_URL}/api/deleteTaskInTodo/${user._id}`,{
-                  taskToBeDeleted : index
-                })
-                console.log(resp);
-                fetchUserTodos()
-            };
+              const handleDeleteTaskForTitle = async (user, index) => {
+                // Ask for confirmation before deleting the task
+                const confirmDelete = window.confirm("Are you sure you want to delete this task?");
+              
+                if (!confirmDelete) {
+                  return; // Exit if the user cancels the deletion
+                }
+              
+                try {
+                  // Send a PUT request to the backend to delete the specific task
+                  const resp = await axios.put(
+                    `${BASE_URL}/api/deleteTaskInTodo/${user._id}`, // Backend endpoint to delete a task
+                    {
+                      taskToBeDeleted: index, // Specify the task index to be deleted
+                    },
+                    {
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      withCredentials: true, // Include credentials if required by the backend
+                    }
+                  );
+              
+                  // Log the response from the server
+                  console.log("Task deleted:", resp);
+              
+                  // Handle success and refresh the list of To-Dos
+                  if (resp.status === 200) {
+                    alert("Task deleted successfully!");
+                    fetchUserTodos(); // Refresh the To-Do list to reflect changes
+                  }
+              
+                } catch (error) {
+                  // Handle and log errors
+                  console.error("Error occurred while deleting the task:", error);
+              
+                  // Check for server response and display an appropriate message
+                  if (error.response) {
+                    alert(error.response.data.message || "Failed to delete the task! Please try again.");
+                  } else {
+                    alert("Unable to connect to the server!");
+                  }
+                }
+              };
 
                 //Searching todo or title
 
       
 
       
-         const submitSearch = async () =>{
-
-          try {
-            const resp = await axios.get(`${BASE_URL}/toSearch`,{
-              params:{
-                search
-              } }   )
-  
-              console.log("searching... " ,resp);
-  
-                //this is not working
-              if (resp.data.message=== "No such todo or task exist!" ) {
-               
-                   alert("Searched todo or task dosen't exist!")
-                   setSearch("");
-                   fetchUserTodos();
-              }
-  
-              if (search === "" ) {
-                alert("please type to search")
+                const submitSearch = async () => {
+                  // Check if the search input is empty
+                  if (!search) {
+                    return alert("Please type something to search.");
+                  }
                 
-           }
-  
-             setUserTodos(resp.data.searchedTodos)
-          } catch (error) {
-            console.log(error);
-            alert("please type to search");
-          }
-         
-
-         }
+                  try {
+                    // Send GET request to the backend with search query
+                    const resp = await axios.get(
+                      `${BASE_URL}/toSearch`, 
+                      {
+                        params: { search }, // Pass the search query in params
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        withCredentials: true, // Include credentials if required by the backend
+                      }
+                    );
+                
+                    console.log("Searching...", resp);
+                
+                    // Check if no results were found
+                    if (resp.data.message === "No such todo or task exist!") {
+                      alert("Searched To-Do or task doesn't exist!");
+                      setSearch(""); // Clear the search input
+                      fetchUserTodos(); // Refresh the To-Do list
+                      return;
+                    }
+                
+                    // Update the state with the search results
+                    setUserTodos(resp.data.searchedTodos);
+                
+                  } catch (error) {
+                    // Handle and log errors
+                    console.error("Error occurred during search:", error);
+                
+                    // Display appropriate alert in case of error
+                    alert(error.response?.data.message || "An error occurred during the search. Please try again.");
+                  }
+                };
 
        const handleSearch = async (e) => {
                 e.preventDefault()
@@ -167,11 +341,32 @@ function TodoLists({fetchUserTodos , userTodos, setUserTodos, BASE_URL}) {
 
        const todoCreationDate = async () => {
 
-        const resp = await axios.get(`${BASE_URL}/sortByDateAndTime`);
-        console.log("sort by creation",resp.data.sortedTodosAtCreation);
-          setUserTodos(resp.data.sortedTodosAtCreation);
-          setCreationDate(resp.data.sortedTodosAtCreation)
-       }
+        const sortByDateAndTime = async () => {
+          try {
+            // Send GET request to sort todos by date and time
+            const resp = await axios.get(`${BASE_URL}/sortByDateAndTime`, {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              withCredentials: true, // Include credentials if required by the backend
+            });
+        
+            console.log("Sorted by creation date:", resp.data.sortedTodosAtCreation);
+        
+            // Update the state with the sorted To-Dos
+            if (resp.data.sortedTodosAtCreation.length > 0) {
+              setUserTodos(resp.data.sortedTodosAtCreation);
+              setCreationDate(resp.data.sortedTodosAtCreation); // Update creation date state if necessary
+            } else {
+              alert("No To-Dos found to sort."); // Notify user if no To-Dos are available
+              setUserTodos([]); // Clear the To-Do list if none are found
+            }
+          } catch (error) {
+            // Handle and log errors
+            console.error("Error occurred while sorting by date and time:", error);
+            alert("An error occurred while sorting. Please try again."); // Notify user of the error
+          }
+        };
 
     
 
@@ -179,11 +374,32 @@ function TodoLists({fetchUserTodos , userTodos, setUserTodos, BASE_URL}) {
         //sort by updation
        const todoUpdationDate = async () => {
 
-        const resp = await axios.get(`${BASE_URL}/sortByDateAndTime`);
-        console.log("sort by updation",resp.data.sortedTodosAtUpdation);
-          setUserTodos(resp.data.sortedTodosAtUpdation);
-          setUpdationDate(resp.data.sortedTodosAtUpdation);
-       }
+        const sortByDateAndTimeAtUpdation = async () => {
+          try {
+            // Initiate GET request to fetch sorted todos by update time
+            const resp = await axios.get(`${BASE_URL}/sortByDateAndTime`, {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              withCredentials: true, // Ensure credentials are passed for authenticated requests
+            });
+        
+            console.log("Sorted by last updation:", resp.data.sortedTodosAtUpdation);
+        
+            // Validate and update state with the sorted data
+            if (resp.data.sortedTodosAtUpdation.length > 0) {
+              setUserTodos(resp.data.sortedTodosAtUpdation); // Update todos with sorted result
+              setUpdationDate(resp.data.sortedTodosAtUpdation); // Store updation date if needed
+            } else {
+              alert("No To-Dos available for sorting by update time.");
+              setUserTodos([]); // Clear the list if there are no To-Dos to display
+            }
+          } catch (error) {
+            // Handle potential errors, logging them for debugging
+            console.error("Error during sorting by update time:", error);
+            alert("An issue occurred while sorting by update time. Please try again later.");
+          }
+        };
 
           // Check for due dates and notify the user
   useEffect(() => {

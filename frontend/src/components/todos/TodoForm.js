@@ -13,23 +13,55 @@ function TodoForm( {fetchUserTodos, BASE_URL} ) {
 
      const handleTitleSubmit = async (e) => {
       e.preventDefault();
-
-      const data = {
-        Title: title,
-        DueDate: dueDate
-      }
-
-      //let resp = await axios.post(`${BASE_URL}/api/todo/`, data)
-       // console.log(resp);
-       axios
-        .post(`${BASE_URL}/api/todo/`, data)
-        .then((response) => console.log(response))
-        .catch((error) => console.error(error));
-       console.log(title, data, "before title")
-        setTitle("")
+    
+      try {
+        // Prepare the data to be sent
+        const data = {
+          Title: title,
+          DueDate: dueDate
+        };
+    
+        // Log data before making the request
+        console.log("Data before submission:", data);
+    
+        // Send POST request to the backend
+        const response = await axios.post(
+          `${BASE_URL}/api/todo/`, // Backend endpoint for the To-Do API
+          data,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            withCredentials: true, // If the backend requires credentials (like cookies)
+          }
+        );
+    
+        // Handle success
+        console.log("Response from server:", response);
+        window.alert("To-Do item added successfully!");
+    
+        // Clear input fields after successful submission
+        setTitle("");
+        setDueDate("");
+    
+        // Fetch updated list of user To-Dos
         fetchUserTodos();
-        console.log(title, data, "after title")
-     }
+    
+        console.log("Data after submission:", title, data);
+    
+      } catch (error) {
+        // Handle error cases
+        console.error("Error occurred while submitting To-Do:", error);
+    
+        // Check if error response is available and display appropriate message
+        if (error.response) {
+          console.error("Error response from server:", error.response.data);
+          window.alert("Failed to add To-Do item! Please try again.");
+        } else {
+          window.alert("Unable to connect to the server!");
+        }
+      }
+    };
 
    // console.log(title, data)
 

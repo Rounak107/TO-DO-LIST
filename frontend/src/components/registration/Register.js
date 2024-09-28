@@ -1,7 +1,7 @@
 import React,{useState} from 'react';
 import {NavLink, useNavigate} from "react-router-dom";
 import axios   from "axios"; 
-import {toast} from "react-hot-toast";
+
 
 
 function Register({BASE_URL}) {
@@ -22,34 +22,58 @@ function Register({BASE_URL}) {
 
         const handleSubmit = async (e) => {
           e.preventDefault();
-          const { firstName, lastName, email, password} = userDetails;
-
+        
+          const { firstName, lastName, email, password } = userDetails;
+        
+          // Validate form fields
+          if (!firstName || !lastName || !email || !password) {
+            alert("Please fill all fields");
+            return;
+          }
+        
+          if (password.length < 8) {
+            alert("Password should be at least 8 characters!");
+            return;
+          }
+        
           const data = {
             firstName,
-             lastName,
-              email,
-               password
-          }
-
-            if (!firstName || !lastName || ! email || !password) {
-                alert("Please fill all fields");
-                return;
-            };
-
-            if (password.length < 8) {
-                alert("password should be atleast of 8 characters!");
-            }
-
-          const resp = await axios.post(`${BASE_URL}/api/u/register`,data);
-          console.log(resp);
-
+            lastName,
+            email,
+            password
+          };
+        
+          try {
+            // Make a POST request to the backend with axios and CORS handling
+            const resp = await axios.post(
+              `${BASE_URL}/api/u/register`,
+              data,
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                // Set withCredentials to true if your backend requires authentication (e.g., cookies)
+                withCredentials: true,
+              }
+            );
+        
+            // Check response and handle success/failure
             if (resp.data.success) {
-                  navigateTo("/")
-                  alert("Registration Successfull,Please Login!");
-            }else{
+              alert("Registration Successful, Please Login!");
+              navigateTo("/"); // Navigate to the login or home page
+            } else {
               alert("Please enter correct credentials");
             }
-        }
+        
+          } catch (error) {
+            console.error("Error occurred during registration:", error);
+            if (error.response && error.response.data) {
+              alert(error.response.data.message || "Registration failed!");
+            } else {
+              alert("Failed to connect to server!");
+            }
+          }
+        };
 
 
   return (

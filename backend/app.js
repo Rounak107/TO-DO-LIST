@@ -12,7 +12,9 @@ const auth = require("./middleware/auth");
  
 app.use(cors({
   credentials : true,
-  origin : "to-do-list-alpha-nine-27.vercel.app"
+  origin: 'https://to-do-list-alpha-nine-27.vercel.app', // Your frontend's URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+  credentials: true,
 }));
 app.use(cookieParser())
 app.use(express.json());

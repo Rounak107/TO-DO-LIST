@@ -10,36 +10,55 @@ function Login({BASE_URL}) {
       const [password, setPassword] =useState("");
 
      
-        const submitLogin = async (e) =>{
-            
-          try {
-            e.preventDefault();
-            const data = {
-              email,
-              password
-            };
-            const resp = await axios.post(`${BASE_URL}/api/u/login`, data, {withCredentials : true});
-            console.log(resp);
-            // save token in session storage
-           sessionStorage.setItem("token", resp.data.token);
-           if (resp.data.success === true) {
+      const submitLogin = async (e) => {
+        e.preventDefault();
+      
+        try {
+          const data = {
+            email,
+            password
+          };
+      
+          // Make a POST request to the backend for login
+          const resp = await axios.post(
+            `${BASE_URL}/api/u/login`,
+            data,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              withCredentials: true, // Ensures cookies are included if your backend requires it
+            }
+          );
+      
+          // Check for successful response and proceed
+          if (resp.data.success) {
+            // Save token in session storage
+            sessionStorage.setItem("token", resp.data.token);
+      
+            // Navigate to dashboard
             navigateTo("/dashboard");
-              
-            console.log(resp.data.token);
-            window.alert("Login Successfull!");
-           } 
-           
-           
-           if(resp.status === 400 || resp.status === 401){
-            alert("Invalid Crenditals!")
-           }
-          } catch (error) {
-            console.log(error);
-            alert("Invalid Credentials!")
+      
+            console.log("Token:", resp.data.token);
+            window.alert("Login Successful!");
           }
-             
-            
+      
+          // Handle possible incorrect credentials
+          if (resp.status === 400 || resp.status === 401) {
+            alert("Invalid Credentials!");
+          }
+      
+        } catch (error) {
+          console.log("Error occurred during login:", error);
+      
+          // Error handling for invalid credentials or server issues
+          if (error.response && (error.response.status === 400 || error.response.status === 401)) {
+            alert("Invalid Credentials!");
+          } else {
+            alert("Failed to connect to the server!");
+          }
         }
+      };
 
 
   return (
