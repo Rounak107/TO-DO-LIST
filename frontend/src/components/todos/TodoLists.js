@@ -337,69 +337,39 @@ function TodoLists({fetchUserTodos , userTodos, setUserTodos, BASE_URL}) {
 
       //sort by creation
 
-       const [creationDate, setCreationDate] = useState(null);
+      const [creationDate, setCreationDate] = useState(null);
 
-       const todoCreationDate = async () => {
+      const todoCreationDate = async () => {
 
-        const sortByDateAndTime = async () => {
-          try {
-            // Send GET request to sort todos by date and time
-            const resp = await axios.get(`${BASE_URL}/sortByDateAndTime`, {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              withCredentials: true, // Include credentials if required by the backend
-            });
-        
-            console.log("Sorted by creation date:", resp.data.sortedTodosAtCreation);
-        
-            // Update the state with the sorted To-Dos
-            if (resp.data.sortedTodosAtCreation.length > 0) {
-              setUserTodos(resp.data.sortedTodosAtCreation);
-              setCreationDate(resp.data.sortedTodosAtCreation); // Update creation date state if necessary
-            } else {
-              alert("No To-Dos found to sort."); // Notify user if no To-Dos are available
-              setUserTodos([]); // Clear the To-Do list if none are found
-            }
-          } catch (error) {
-            // Handle and log errors
-            console.error("Error occurred while sorting by date and time:", error);
-            alert("An error occurred while sorting. Please try again."); // Notify user of the error
-          }
-        };
+       const resp = await axios.get(`${BASE_URL}/sortByDateAndTime`,
+  {
+             headers: {
+               'Content-Type': 'application/json',
+             },
+             withCredentials: true, // Include credentials if required by the backend
+           });
+       console.log("sort by creation",resp.data.sortedTodosAtCreation);
+         setUserTodos(resp.data.sortedTodosAtCreation);
+         setCreationDate(resp.data.sortedTodosAtCreation)
+      }
 
-    
+   
 
-       const [updationDate, setUpdationDate] = useState(null);
-        //sort by updation
-       const todoUpdationDate = async () => {
+      const [updationDate, setUpdationDate] = useState(null);
+       //sort by updation
+      const todoUpdationDate = async () => {
 
-        const sortByDateAndTimeAtUpdation = async () => {
-          try {
-            // Initiate GET request to fetch sorted todos by update time
-            const resp = await axios.get(`${BASE_URL}/sortByDateAndTime`, {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              withCredentials: true, // Ensure credentials are passed for authenticated requests
-            });
-        
-            console.log("Sorted by last updation:", resp.data.sortedTodosAtUpdation);
-        
-            // Validate and update state with the sorted data
-            if (resp.data.sortedTodosAtUpdation.length > 0) {
-              setUserTodos(resp.data.sortedTodosAtUpdation); // Update todos with sorted result
-              setUpdationDate(resp.data.sortedTodosAtUpdation); // Store updation date if needed
-            } else {
-              alert("No To-Dos available for sorting by update time.");
-              setUserTodos([]); // Clear the list if there are no To-Dos to display
-            }
-          } catch (error) {
-            // Handle potential errors, logging them for debugging
-            console.error("Error during sorting by update time:", error);
-            alert("An issue occurred while sorting by update time. Please try again later.");
-          }
-        };
+       const resp = await axios.get(`${BASE_URL}/sortByDateAndTime`
+ , {
+             headers: {
+               'Content-Type': 'application/json',
+             },
+             withCredentials: true, // Include credentials if required by the backend
+           });
+       console.log("sort by updation",resp.data.sortedTodosAtUpdation);
+         setUserTodos(resp.data.sortedTodosAtUpdation);
+         setUpdationDate(resp.data.sortedTodosAtUpdation);
+      }
 
           // Check for due dates and notify the user
   useEffect(() => {
@@ -498,7 +468,7 @@ function TodoLists({fetchUserTodos , userTodos, setUserTodos, BASE_URL}) {
             />
             </div>
             <div>
-            <button   type='button' onClick={()=>handdleTasksForTitle(user._id)}   className=' relative bg-gray-300 active:bg-gray-400 px-[0.8rem] rounded-[0.3rem] top-[0.8rem] ' >Add</button>
+            <button   type='button' onClick={()=>handleTasksForTitle(user._id)}   className=' relative bg-gray-300 active:bg-gray-400 px-[0.8rem] rounded-[0.3rem] top-[0.8rem] ' >Add</button>
             </div>
           </div>
             {/* Tasks inside title */}
