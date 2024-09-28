@@ -12,7 +12,7 @@ const auth = require("./middleware/auth");
  
 app.use(cors({
   credentials : true,
-  origin : "http://localhost:3000"
+  origin : "to-do-list-alpha-nine-27.vercel.app"
 }));
 app.use(cookieParser())
 app.use(express.json());
