@@ -25,6 +25,7 @@ function Login({BASE_URL}) {
             data,
             {
               headers: {
+                'Access-Control-Allow-Origin': '*',
                 'Content-Type': 'application/json',
               },
               withCredentials: true, // Ensures cookies are included if your backend requires it

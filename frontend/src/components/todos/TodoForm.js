@@ -30,6 +30,7 @@ function TodoForm( {fetchUserTodos, BASE_URL} ) {
           data,
           {
             headers: {
+              'Access-Control-Allow-Origin': '*',
               'Content-Type': 'application/json',
             },
             withCredentials: true, // If the backend requires credentials (like cookies)

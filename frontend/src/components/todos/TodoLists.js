@@ -44,6 +44,7 @@ function TodoLists({fetchUserTodos , userTodos, setUserTodos, BASE_URL}) {
             },
             {
               headers: {
+                'Access-Control-Allow-Origin': '*',
                 'Content-Type': 'application/json',
               },
               withCredentials: true, // Include credentials like cookies if required by the backend
@@ -88,6 +89,7 @@ function TodoLists({fetchUserTodos , userTodos, setUserTodos, BASE_URL}) {
               `${BASE_URL}/api/deleteATodo/${user._id}`,
               {
                 headers: {
+                  'Access-Control-Allow-Origin': '*',
                   'Content-Type': 'application/json',
                 },
                 withCredentials: true, // Include credentials like cookies if needed by the backend
@@ -139,6 +141,7 @@ function TodoLists({fetchUserTodos , userTodos, setUserTodos, BASE_URL}) {
                   data,
                   {
                     headers: {
+                      'Access-Control-Allow-Origin': '*',
                       'Content-Type': 'application/json',
                     },
                     withCredentials: true, // Include credentials like cookies if required by the backend
@@ -207,6 +210,7 @@ function TodoLists({fetchUserTodos , userTodos, setUserTodos, BASE_URL}) {
                   data,
                   {
                     headers: {
+                      'Access-Control-Allow-Origin': '*',
                       'Content-Type': 'application/json',
                     },
                     withCredentials: true, // Include credentials if required by the backend
@@ -253,6 +257,7 @@ function TodoLists({fetchUserTodos , userTodos, setUserTodos, BASE_URL}) {
                     },
                     {
                       headers: {
+                        'Access-Control-Allow-Origin': '*',
                         'Content-Type': 'application/json',
                       },
                       withCredentials: true, // Include credentials if required by the backend
@@ -299,6 +304,7 @@ function TodoLists({fetchUserTodos , userTodos, setUserTodos, BASE_URL}) {
                       {
                         params: { search }, // Pass the search query in params
                         headers: {
+                          'Access-Control-Allow-Origin': '*',
                           'Content-Type': 'application/json',
                         },
                         withCredentials: true, // Include credentials if required by the backend
@@ -343,9 +349,10 @@ function TodoLists({fetchUserTodos , userTodos, setUserTodos, BASE_URL}) {
 
        const resp = await axios.get(`${BASE_URL}/sortByDateAndTime`,
   {
-             headers: {
-               'Content-Type': 'application/json',
-             },
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/json',
+    },
              withCredentials: true, // Include credentials if required by the backend
            });
        console.log("sort by creation",resp.data.sortedTodosAtCreation);
@@ -361,9 +368,10 @@ function TodoLists({fetchUserTodos , userTodos, setUserTodos, BASE_URL}) {
 
        const resp = await axios.get(`${BASE_URL}/sortByDateAndTime`
  , {
-             headers: {
-               'Content-Type': 'application/json',
-             },
+  headers: {
+    'Access-Control-Allow-Origin': '*',
+    'Content-Type': 'application/json',
+  },
              withCredentials: true, // Include credentials if required by the backend
            });
        console.log("sort by updation",resp.data.sortedTodosAtUpdation);

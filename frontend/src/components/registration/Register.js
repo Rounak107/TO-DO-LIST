@@ -50,6 +50,7 @@ function Register({BASE_URL}) {
               data,
               {
                 headers: {
+                  'Access-Control-Allow-Origin': '*',
                   'Content-Type': 'application/json',
                 },
                 // Set withCredentials to true if your backend requires authentication (e.g., cookies)
