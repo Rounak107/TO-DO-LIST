@@ -101,6 +101,7 @@ function TodoLists({fetchUserTodos , userTodos, setUserTodos, BASE_URL}) {
               console.log("To-Do deleted:", resp);
               fetchUserTodos(); // Refresh the list of To-Dos
               window.alert("To-Do item deleted successfully!");
+              window.location.reload(); 
             }
         
           } catch (error) {
