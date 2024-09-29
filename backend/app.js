@@ -9,8 +9,13 @@ const cookieParser = require('cookie-parser');
 const auth = require("./middleware/auth");
 
 
+let corsOptions = {
+    origin : ['http://localhost:3000', 'https://to-do-list-alpha-nine-27.vercel.app'],
+    credentials : true,
+ }
  
-app.use(cors());
+ app.use(cors(corsOptions))
+//app.use(cors());
 
 // app.use(function(req, res, next) {
 //    res.header("Access-Control-Allow-Origin", "*");
