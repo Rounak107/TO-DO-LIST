@@ -5,13 +5,24 @@ import TodoLists from './todos/TodoLists'
 function Dashboard() {
     const token = sessionStorage.getItem("token");
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-  const BASE_URL = "http://localhost:4000";
+  const BASE_URL = "https://to-do-list-rv1l.vercel.app";
   
   const [userTodos, setUserTodos] = useState(null);
   //to get all todos
 
   const fetchUserTodos = async () => {
-    const resp = await axios.get(`${BASE_URL}/api/todo`)
+    const resp = await axios.get(
+      `${BASE_URL}/api/todo`,
+      
+      {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true, // Ensures cookies are included if your backend requires it
+      }
+    );
+   // const resp = await axios.get(`${BASE_URL}/api/todo`)
 
       if (resp.data.todos.length >0) {
         setUserTodos(resp.data.todos);
